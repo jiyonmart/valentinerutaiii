@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💜</title>
+
+<style>
+body {
+  background: url("lav1.png") center/cover no-repeat fixed;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  overflow: hidden;
+  min-height: 100vh;
+  margin: 0;
+  color: #4b3c8a;
+}
+
+/* FADE BACKGROUND */
+#bgFade {
+  position: fixed;
+  inset: 0;
+  background: url("lav2.png") center/cover no-repeat;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  z-index: -1;
+}
+
+/* ===== TEXT FIX ===== */
+.text-box {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+}
+
+h1 {
+  font-size: 3em;
+  margin-top: 30px;
+  color: #f8f5ff;
+  text-shadow:
+    0 2px 6px rgba(0,0,0,0.35),
+    0 0 12px rgba(120,80,200,0.6);
+}
+
+p {
+  font-size: 1.2em;
+  color: #f2ecff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+/* buttons */
+button {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  margin: 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#yesBtn { background-color: #a67cf8; color: white; font-size: 1.5em; }
+#noBtn { background-color: #ccc; }
+
+/* gif */
+#gif {
+  width: 220px;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+/* photos – SIDE ONLY */
+.photo-scatter img {
+  width: 110px;
+  border-radius: 15px;
+  position: absolute;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* cd */
+#cd {
+  width: 140px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  animation: spin 5s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== MUSIC PLAYER ===== */
+.player {
+  width: 320px;
+  margin: 20px auto;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  border-radius: 25px;
+  padding: 15px;
+}
+
+.cover {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.title { font-size: 14px; }
+
+.time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+input[type="range"] { width: 100%; }
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.play-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-btn span {
+  font-size: 26px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="bgFade"></div>
+
+<div class="text-box">
+  <h1>Will you be my Valentine? 💜 </h1>
+  <p>Please say yes, Jane🥺💖</p>
+</div>
+
+<img id="gif" src="https://media.tenor.com/pdv5YIMB-hkAAAAj/cute.gif">
+
+<br><br><br>
+
+<button id="yesBtn" onclick="yesClicked()">Yes 💜</button>
+<button id="noBtn" onclick="noClicked()">No 🙈</button>
+
+<script>
+let yesSize = 1.5;
+let gifIndex = 0;
+
+const gifs = [
+  "https://media.tenor.com/pdv5YIMB-hkAAAAj/cute.gif",
+  "https://media.tenor.com/U6IiiLabxkcAAAAj/cat-meme.gif",
+  "https://media1.tenor.com/m/9Get-BFsdfAAAAAd/spongebob-spongebob-meme.gif",
+  "https://media.tenor.com/C35t4Pf5GlgAAAAj/peach-and-goma-cute.gif"
+];
+
+const finalGif = "https://media.tenor.com/SzjZCjI1kZQAAAAj/bubu-bubu-dudu.gif";
+
+/* ALL 10 PHOTOS */
+const photos = [
+  "c6c124c4-1541-4cbb-a888-c4d70327f9f0.jpeg",
+  "3f215df3-209e-43af-ad37-dcc88892e37a.jpeg",
+  "c70d63a3-4abd-4c33-9b10-9ac7cf0990a7.jpeg",
+  "277c1f38-f81e-4d9b-9a69-ceaca0e802fe.jpeg",
+  "3c0d39d1-d30a-4afd-8ae0-29424072208a.jpeg",
+  "cf17629c-79ef-4ce8-83dc-e0ac4265dd77.jpeg",
+  "d1a77281-e4c9-4462-8517-8a31049fffb8.jpeg",
+  "7f590334-1e6e-4867-b233-2ce5ddd12b29.jpeg",
+  "6a5dd2f3-36dd-478f-bc59-4fc02a631ce2.jpeg",
+  "cf17629c-79ef-4ce8-83dc-e0ac4265dd77.jpeg"
+];
+
+function randomSidePosition(el){
+  const side = Math.random() < 0.5 ? "left" : "right";
+  el.style.top = Math.random() * (window.innerHeight - 150) + "px";
+  el.style[side] = Math.random() * 20 + "px";
+}
+
+randomSidePosition(document.getElementById("gif"));
+
+function noClicked(){
+  yesSize += 0.4;
+  yesBtn.style.fontSize = yesSize + "em";
+
+  gifIndex = Math.min(gifIndex + 1, gifs.length - 1);
+  gif.src = gifs[gifIndex];
+  randomSidePosition(gif);
+}
+
+function yesClicked(){
+  document.getElementById("bgFade").style.opacity = "1";
+
+  document.body.innerHTML = `
+    <div id="bgFade" style="opacity:1"></div>
+
+    <div class="text-box">
+      <h1>Advance Happy Valentine’s Day, Baby!!!</h1>
+      <p>I’m so glad its you again and again, i love youuuu!!! ❤️</p>
+    </div>
+
+    <div class="player">
+      <img src="mrlvermanalbum.jpg" class="cover">
+      <p class="title">Mr. Loverman – Ricky Montgomery</p>
+
+      <audio id="audio" autoplay>
+        <source src="Ricky_Montgomery_-_Mr_Loverman_Lyric_Video_Indo_Subtitle_Lirik_Indonesia_Lirik_Terjemahan_128k.mp3">
+      </audio>
+
+      <div class="time">
+        <span id="current">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
+
+      <input type="range" id="progress">
+
+      <div class="controls">
+        <button class="play-btn" onclick="playPause()"><span id="icon">⏸</span></button>
+      </div>
+
+      <input type="range" id="volume" min="0" max="1" step="0.01">
+    </div>
+
+    <img id="finalGif" src="${finalGif}" style="width:220px; position:absolute;">
+    <img id="cd" src="vin2.png">
+
+    <div class="photo-scatter">
+      ${photos.map(p => `<img src="${p}">`).join("")}
+    </div>
+  `;
+
+  const audio = document.getElementById("audio");
+  const progress = document.getElementById("progress");
+  const volume = document.getElementById("volume");
+  const current = document.getElementById("current");
+  const duration = document.getElementById("duration");
+
+  volume.value = 0.5;
+  audio.volume = 0.5;
+
+  audio.ontimeupdate = () => {
+    progress.max = audio.duration;
+    progress.value = audio.currentTime;
+    current.innerText = format(audio.currentTime);
+    duration.innerText = format(audio.duration);
+  };
+
+  progress.oninput = () => audio.currentTime = progress.value;
+  volume.oninput = () => audio.volume = volume.value;
+
+  document.querySelectorAll(".photo-scatter img")
+    .forEach(img => randomSidePosition(img));
+
+  randomSidePosition(document.getElementById("finalGif"));
+}
+
+function playPause(){
+  const audio = document.getElementById("audio");
+  const icon = document.getElementById("icon");
+  if(audio.paused){
+    audio.play();
+    icon.textContent = "⏸";
+  } else {
+    audio.pause();
+    icon.textContent = "▶";
+  }
+}
+
+function format(t){
+  if(isNaN(t)) return "0:00";
+  return Math.floor(t/60) + ":" + String(Math.floor(t%60)).padStart(2,"0");
+}
+</script>
+
+</body>
+</html>
