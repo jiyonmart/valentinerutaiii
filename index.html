@@ -26,7 +26,7 @@ body {
   z-index: -1;
 }
 
-/* ===== TEXT FIX ===== */
+/* ===== TEXT BOX ===== */
 .text-box {
   display: inline-block;
   padding: 14px 28px;
@@ -39,9 +39,7 @@ h1 {
   font-size: 3em;
   margin-top: 30px;
   color: #f8f5ff;
-  text-shadow:
-    0 2px 6px rgba(0,0,0,0.35),
-    0 0 12px rgba(120,80,200,0.6);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35), 0 0 12px rgba(120,80,200,0.6);
 }
 
 p {
@@ -70,7 +68,7 @@ button {
   transition: all 0.3s ease;
 }
 
-/* photos – SIDE ONLY */
+/* photos */
 .photo-scatter img {
   width: 110px;
   border-radius: 15px;
@@ -169,7 +167,7 @@ const gifs = [
 
 const finalGif = "https://media.tenor.com/SzjZCjI1kZQAAAAj/bubu-bubu-dudu.gif";
 
-/* ALL 10 PHOTOS */
+/* ALL PHOTOS */
 const photos = [
   "c6c124c4-1541-4cbb-a888-c4d70327f9f0.jpeg",
   "3f215df3-209e-43af-ad37-dcc88892e37a.jpeg",
@@ -179,8 +177,7 @@ const photos = [
   "cf17629c-79ef-4ce8-83dc-e0ac4265dd77.jpeg",
   "d1a77281-e4c9-4462-8517-8a31049fffb8.jpeg",
   "7f590334-1e6e-4867-b233-2ce5ddd12b29.jpeg",
-  "6a5dd2f3-36dd-478f-bc59-4fc02a631ce2.jpeg",
-  "cf17629c-79ef-4ce8-83dc-e0ac4265dd77.jpeg"
+  "6a5dd2f3-36dd-478f-bc59-4fc02a631ce2.jpeg"
 ];
 
 function randomSidePosition(el){
@@ -196,8 +193,8 @@ function noClicked(){
   yesBtn.style.fontSize = yesSize + "em";
 
   gifIndex = Math.min(gifIndex + 1, gifs.length - 1);
-  gif.src = gifs[gifIndex];
-  randomSidePosition(gif);
+  document.getElementById("gif").src = gifs[gifIndex];
+  randomSidePosition(document.getElementById("gif"));
 }
 
 function yesClicked(){
@@ -260,9 +257,7 @@ function yesClicked(){
   progress.oninput = () => audio.currentTime = progress.value;
   volume.oninput = () => audio.volume = volume.value;
 
-  document.querySelectorAll(".photo-scatter img")
-    .forEach(img => randomSidePosition(img));
-
+  positionPhotos();
   randomSidePosition(document.getElementById("finalGif"));
 }
 
@@ -281,6 +276,27 @@ function playPause(){
 function format(t){
   if(isNaN(t)) return "0:00";
   return Math.floor(t/60) + ":" + String(Math.floor(t%60)).padStart(2,"0");
+}
+
+/* ===== PHOTO POSITIONING FUNCTION ===== */
+function positionPhotos() {
+  const leftX = 20;
+  const rightX = window.innerWidth - 130;
+  const gapY = 160;
+
+  document.querySelectorAll(".photo-scatter img").forEach((img, i) => {
+    if(i < 3){ // left
+      img.style.left = leftX + "px";
+      img.style.top = (i * gapY + 50) + "px";
+    } else if(i < 6){ // right
+      img.style.right = "20px";
+      img.style.top = ((i-3) * gapY + 50) + "px";
+    } else { // random
+      const side = Math.random() < 0.5 ? "left" : "right";
+      img.style.top = Math.random() * (window.innerHeight - 150) + "px";
+      img.style[side] = Math.random() * 20 + "px";
+    }
+  });
 }
 </script>
 
